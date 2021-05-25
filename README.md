@@ -2,6 +2,15 @@
 ## About
 The Frontend Automation Tool automates the checking of common frontend checks (Example: https://frontendchecklist.io). At the same time, this tool automates accessibility testing checks, according the Web Content Accessibility Guidelines (WCAG) 2.1.
 
+## Technologies Used
+1. NodeJS - Backend 
+2. Express - NodeJs Framework for handling POST requests
+3. Bootstrap - Frontend Framework for styling components
+4. Axe-Core - External library to test for components against WCAG guidelines (Github link: https://github.com/dequelabs/axe-core)
+5. EJS - Templating engine for displaying JSON data 
+
+
+
 ## Installation
 1. Open the command prompt and change the current working directory to the location where you want the cloned directory
 2. In the command prompt, type `git clone https://github.com/hopesishu/frontend-accessibility-checklist.git`
