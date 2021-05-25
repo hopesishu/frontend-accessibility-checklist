@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Frontend Automation Checker</title>
+        <!-- Style Scripts -->
+        <link rel="stylesheet" href="/css/styles.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Script for Icons-->
+        <script src="https://kit.fontawesome.com/563e513a58.js" crossorigin="anonymous"></script>
+        <script src="/javascript/mainFunctions.js"></script>
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="/images/favicon.png"/>
+        <!-- Script for font -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+        <script>
+          window.onload = function() {
+            if(!window.location.hash) {
+                window.location = window.location + '#loaded';
+                window.location.reload();
+            }
+          }
+        </script>
+    </head>
+    <header>
+      <%- include('partials/navbar') %>
+    </header>
+    <body>
+      <div class="container" id="document">
+        <div class="header text-center pt-5 p-4">
+          <h1>Frontend Automation Tool</h1>
+          <p>The Frontend Automation Tool automates frontend checks and web accessibility tests.</p>
+        </div>
+
+        <% for(var i=0; i < FEdata.length; i++) { %>
+        <div class="card card-body">
+          <div class="row">
+            <div class="col">
+              <sp>URL: <a href='<%= FEdata[i].url %>'><%= FEdata[i].url %></a></p>
+              <button class="btn btn-sm btn-info" onClick="window.print()">Generate Report</button>
+            </div>
+
+            <div class="legend col-4 col-ml-auto">
+              <div>
+                <small><b>Legend:</b></small>
+              </div>
+              <div>
+                <span class="badge rounded-pill bg-danger text-light align-middle"> </span>&nbsp;&nbsp;<small>High priority</small>
+              </div>
+              <div>
+                <span class="badge rounded-pill bg-warning text-light"> </span>&nbsp;&nbsp;<small>Medium priority</small>
+              </div>
+              <div>
+                <span class="badge rounded-pill bg-success text-light"> </span>&nbsp;&nbsp;<small>Low priority</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Frontend Checklist</h2>
+        <!-- <span>Url being checked: </span><a href='<%= FEdata[i].url %>'><%= FEdata[i].url %></a>   -->
+        <table class="table table-striped table-bordered table-sm">
+          <thead class="thead-dark">
+            <tr>
+              <th>Checklist Item</th>
+              <th>Test Case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for(var j=0; j < FEdata[i].violations.length; j++) { %>
+            <tr>
+              <% if (FEdata[i].violations[j].priority == "Low") { %>
+              <td><span class="badge rounded-pill bg-success text-light align-middle"> </span>&nbsp;&nbsp;<b><%= FEdata[i].violations[j].checklistitem %>: </b><%= FEdata[i].violations[j].requirement %>
+                <div class="p-3" id="<%= j %>">
+                  <% if (FEdata[i].violations[j].info) { %>
+                    <small>Remarks:</small>
+                    <%= FEdata[i].violations[j].info %>
+                  <% } %>  
+                </div>
+              </td>
+              <% } else if (FEdata[i].violations[j].priority == "Medium") { %>
+              <td><span class="badge rounded-pill bg-warning text-light align-middle"> </span>&nbsp;&nbsp;<b><%= FEdata[i].violations[j].checklistitem %>: </b><%= FEdata[i].violations[j].requirement %>
+                <div class="p-3" id="<%= j %>">
+                  <% if (FEdata[i].violations[j].info) { %>
+                    <small>Remarks:</small>
+                    <%= FEdata[i].violations[j].info %>
+                  <% } %>  
+                </div>
+              </td>
+              <% } else if (FEdata[i].violations[j].priority == "High") { %>
+              <td><span class="badge rounded-pill bg-danger text-light align-middle"> </span>&nbsp;&nbsp;<b><%= FEdata[i].violations[j].checklistitem %>: </b><%= FEdata[i].violations[j].requirement %>
+                <div class="p-3" id="<%= j %>">
+                  <% if (FEdata[i].violations[j].info) { %>
+                    <small>Remarks:</small>
+                    <%= FEdata[i].violations[j].info %>
+                  <% } %>  
+                </div>
+              </td>
+              <% } else { %>
+              <td><b><%= FEdata[i].violations[j].checklistitem %>: </b><%= FEdata[i].violations[j].requirement %></td>
+              <% } %>
+              <td><%= FEdata[i].violations[j].testcase %></td>
+            </tr>         
+            <% } %>
+          </tbody>
+        </table>
+
+
+        <h2>Accessibility Testing</h2>
+        <!-- <p>Url being checked: <a href='<%= ACdata[i].url %>'><%= ACdata[i].url %></a></p>  -->
+        <% for(var j=0; j < ACdata[i].violations.length; j++) { %>
+        <div>
+          <div class="row col">
+            <dl class="row">
+              <dt class="col-sm-2">Violation ID</dt>
+              <dd class="col-sm-10"><%= ACdata[i].violations[j].id %></dd>
+              <dt class="col-sm-2">Impact</dt>
+              <dd class="col-sm-10"><%= ACdata[i].violations[j].impact %></dd>
+              <dt class="col-sm-2">Description</dt>
+              <dd class="col-sm-10"><%= ACdata[i].violations[j].description %></dd>
+              <dt class="col-sm-2">Help</dt>
+              <dd class="col-sm-10"><%= ACdata[i].violations[j].help %></dd>
+              <dt class="col-sm-2">HelpURL</dt>
+              <dd class="col-sm-10"><%= ACdata[i].violations[j].helpUrl %></dd>
+            </dl>
+          </div>  
+          <ol class="node-info">
+            <% for (var k=0; k < ACdata[i].violations[j].nodes.length; k++) { %>
+            <li>Node </li>
+            <ul>
+              <li>Impact: <%= ACdata[i].violations[j].nodes[k].impact %></li>
+              <li>HTML: <%= ACdata[i].violations[j].nodes[k].html %></li>
+              <li>Target: <%= ACdata[i].violations[j].nodes[k].target %></li>
+              <li>Failure summary: <%= ACdata[i].violations[j].nodes[k].failureSummary %></li>
+            </ul>
+            <% } %>
+          </ol>
+        </div>
+        <hr>
+        <% } %>
+        <div class="pagebreak"> </div>
+        <% } %>
+      </div>
+      <footer>
+        <%- include('partials/footer') %>
+    </footer>
+    </body>
+    <script src="/javascript/script.js"></script>
+</html>

@@ -1,0 +1,10 @@
+.navbar {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #3D5A80 !important;
+}

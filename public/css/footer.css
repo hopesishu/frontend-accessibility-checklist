@@ -1,0 +1,10 @@
+.footer {
+    padding-top: 32px;
+    padding-bottom: 32px;
+    background: #273a52; /*3D5A80*/
+    color: #FFFFFF;
+}
+
+#copyright-link, #copyright-link:hover, #copyright-link:active, #copyright-link:focus {
+    color: #98C1D9 !important;
+}
