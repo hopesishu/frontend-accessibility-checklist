@@ -43,14 +43,9 @@ async function monitor() {
         await functions.checkDesc(page);
         await functions.checkFavicon(page);
         await functions.checkAltLang(page);
-        await functions.checkCommonHead(page);
         await functions.cleanUpComments(page);
         await functions.checkSimpleURL(page);
-        await functions.checkUpdatedDate(page);
-        await functions.checkWebfont(page);
         await functions.checkInlineCSS(page);
-        await functions.checkCommonHeader(page);
-        await functions.checkCommonFooter(page);
         await functions.checkInlineJS(page);
         await functions.checkAltText(page);
 

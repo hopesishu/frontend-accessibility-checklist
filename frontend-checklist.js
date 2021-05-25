@@ -82,7 +82,7 @@ async function checkViewport(page) {
 }
 
 async function checkTitle(page) {
-    //checks if title has the words "HDB" or "Housing and Development Board"
+    //checks if title is present
     o = {
         "checklistitem": "Title",
         "requirement": "A title must be used on all pages.",
@@ -92,12 +92,12 @@ async function checkTitle(page) {
     }
     try {
         const title = await page.title();
-        if (title.includes ("HDB") || title.includes("Housing & Development Board")) {
+        if (title != "") {
             o.testcase = "Pass";
             o.info = "Title has been declared as: " + title;
         } else {
             o.testcase = "Fail";
-            o.info = "This webpage does not have a proper title following HDB's standards."
+            o.info = "This webpage does not have a title"
         }
         violations.push(o);
     } catch (err) {
@@ -138,20 +138,18 @@ async function checkFavicon(page) {
     //different favicon link for homepage and e-services
     o = {
         "checklistitem": "Favicon",
-        "requirement": "Ensure to use HDB favicon and that it displays correctly. Do refer to the HDB Favicon guide and download the Favicon.",
+        "requirement": "Ensure the webpage has a favicon and that it displays correctly.",
         "priority": "Medium",
         "testcase": "",
         "info": "",
     }
     try {
-        // const eservice = await page.$eval()
-
         const favicon_link = await page.$eval("head > link[rel='icon']", element => element.getAttribute("href"));
-        if (favicon_link == "/html/Dashboard/Foundation/Theming/images/favicon.ico" || "/favicon.ico") {
+        if (favicon_link == "/favicon.ico") {
             o.testcase = "Pass";
         } else {
             o.testcase = "Fail";
-            o.testcase = "This webpage does not have the correct HDB favicon.";
+            o.testcase = "This webpage does not have a favicon.";
         }
         violations.push(o);
     } catch (err) {
@@ -183,36 +181,6 @@ async function checkAltLang(page) {
     } catch (err) {
         o.testcase = "Fail";
         o.info = "Unable to find <html> lang tag."
-        violations.push(o);
-    }
-}
-
-async function checkCommonHead(page) {
-    //checks if common head script is present in HTML
-    //prints out first line of code that is within <script> tags
-    //only e-service webpages have common header scripts
-    o = {
-        "checklistitem": "Common Head Script",
-        "requirement": "Ensure that head common script is added and placed correctly within the <head> section of the HTML page.",
-        "priority": "High",
-        "testcase": "",
-        "info": ""
-    }
-    try {
-        var head = await page.evaluate(() => Array.from(document.querySelectorAll("head > script"), e => e.src))
-        for (var i = 0; i < head.length; i++) {
-            if (head[i] == "https://services2.hdb.gov.sg/web/fi10/infoweb/common/js/FI10Zhead.js") {
-                o.testcase = "Pass";
-                violations.push(o);
-                return;
-            }
-        }
-        o.testcase = "Fail";
-        o.info = "The common head script is not within the HTML document, or this page is not an e-Service webpage.";
-        violations.push(o);
-    } catch (err) {
-        o.testcase = "Fail";
-        o.info = "Unable to retrieve <script> tags.";
         violations.push(o);
     }
 }
@@ -268,69 +236,6 @@ async function checkSimpleURL(page) {
     }
 }
 
-async function checkUpdatedDate(page) {
-    //prints out the last updated date of the page
-    //date stamp should not be more than 24 months from date of access
-    o = {
-        "checklistitem": "Last updated date",
-        "requirement": "Display a last updated/reviewed date stamp at the end of webpages in web-based informational services to indicate the currency of the content.",
-        "priority": "High",
-        "testcase": "",
-        "info": ""
-    }
-    try {
-        const lastReview = await page.evaluate(() => Array.from(document.querySelectorAll('.last-review > p'), element => element.textContent));
-        const remove2words = words => words.split(" ").slice(2).join(" ");
-        const lastReviewedDate = remove2words(lastReview[1]);
-    
-        const currentDate = new Date();
-        const latestPossibleDate = new Date().setFullYear(currentDate.getFullYear() - 2);
-        const lastDate = new Date(lastReviewedDate);
-    
-        //lastDate is the last reviewed date of the page
-        //latestPossibleDate is the oldest date before the page needs to be re-updated
-        //if lastDate is more recent that latestPossibleDate, test passes
-        if (lastDate >= latestPossibleDate) {
-            o.testcase = "Pass";
-            o.info = "Page was last updated on " + lastReviewedDate + ", which is within the last 2 years.";
-        } else {
-            o.testcase = "Fail";
-            o.info = "Page was last updated on " + lastReviewedDate + "which is not within 2 years, and needs to be re-updated.";
-        }
-        violations.push(o);
-    } catch (err) {
-        o.testcase = "Fail";
-        o.info = "Unable to retrieve last updated date of page.";
-        violations.push(o);
-    }
-}
-
-//WEBFONT section
-async function checkWebfont(page) {
-    //ensures that the HDB "cabin" font is used
-    o = {
-        "checklistitem": "Webfont",
-        "requirement": "Ensure that HDB's 'Cabin' font is utilised.",
-        "priority": "High",
-        "testcase": "",
-        "info": "",
-    }
-    try {
-        const cabinFont = "family=cabin";
-        const font = await page.$eval("head > link[rel='stylesheet']", element => element.getAttribute("href"));
-        if (font.toLowerCase().includes(cabinFont)) {
-            o.testcase = "Pass"
-        } else {
-            o.testcase = "Fail"
-        }
-        violations.push(o);
-    } catch (err) {
-        o.testcase = "Fail"
-        o.info = "Unable to find <link> stylesheet tag."
-        violations.push(o);
-    }
-}
-
 //CSS section 
 async function checkInlineCSS(page) {
     //checks if there is any embedded/inline css within the HTML file
@@ -367,64 +272,6 @@ async function checkInlineCSS(page) {
 }
 
 //JAVASCRIPT section
-async function checkCommonHeader(page) {
-    //checks if common header script is present in HTML
-    //prints out first line of code that is within <script> tags
-    //only e-service webpages have common header scripts
-    o = {
-        "checklistitem": "Common Header Script",
-        "requirement": "Ensure that common header script is added and placed correctly within the start of the <body> section of the HTML page.",
-        "priority": "High",
-        "testcase": "",
-        "info": ""
-    }
-    try {
-        const header = await page.$eval("body > script", element => element.getAttribute("src"));
-        if (header == "/web/fi10/infoweb/common/js/FI10Zheader.js") {
-            o.testcase = "Pass";
-        } else {
-            o.testcase = "Fail";
-            o.info = "The common header script is not placed at the top of the <body> section, or this page is not an e-Service webpage.";
-        }
-        violations.push(o);
-    } catch (err) {
-        o.testcase = "Fail";
-        o.info = "Unable to retrieve the <script> tag within the <body> section."
-        violations.push(o);
-    }
-}
-
-async function checkCommonFooter(page) {
-    //checks if common footer script is present in HTML
-    //only e-services webpages have commone footer scripts
-    o = {
-        "checklistitem": "Common Footer Script",
-        "requirement": "Ensure that head common script is added and place correctly within the end of the <body> section of the HTML page.",
-        "priority": "High",
-        "testcase": "",
-        "info": "",
-    }
-    try {
-        var footer = await page.evaluate(() => Array.from(document.querySelectorAll("body > script"), e => e.src))
-
-        for (var i = 0; i < footer.length; i++) {
-            if (footer[i] == "https://services2.hdb.gov.sg/web/fi10/infoweb/common/js/FI10Zfooter.js") {
-                o.testcase = "Pass";
-                violations.push(o);
-                return;
-            }
-        }
-        o.testcase = "Fail";
-        o.info = "The common footer script is not within the HTML document, or this page is not an e-Service webpage.";
-        violations.push(o);
-        // console.log(footer);
-    } catch (err) {
-        o.testcase = "Fail";
-        o.info = "Unable to retrieve <script> tags.";
-        violations.push(o);
-    }
-}
-
 async function checkInlineJS (page) {
     //checks if there is inline JavaScript present
     //checks for code/functions within <script> tags
@@ -497,11 +344,10 @@ async function clearArray() {
 }
 
 module.exports = { 
-    checkDoctype, checkCharset, checkViewport, checkTitle, checkDesc, checkFavicon, checkAltLang, checkCommonHead,
-    cleanUpComments, checkSimpleURL, checkUpdatedDate, 
-    checkWebfont, 
+    checkDoctype, checkCharset, checkViewport, checkTitle, checkDesc, checkFavicon, checkAltLang,
+    cleanUpComments, checkSimpleURL,
     checkInlineCSS,
-    checkCommonHeader, checkCommonFooter, checkInlineJS,
+    checkInlineJS,
     checkAltText,
     clearArray, violations
  };
