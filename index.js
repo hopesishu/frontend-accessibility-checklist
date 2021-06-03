@@ -1,16 +1,11 @@
 const puppeteer = require('puppeteer');
-const read = require('./read.js'); //reading from command line
 const axecore = require('./axecore-function.js');
 const functions = require('./frontend-checklist.js');
 const { violations } = require('./frontend-checklist.js');
 const fs = require('fs');
 const util = require('util'); //util expands the array in JSON file 
 
-//testing the array from node file
 const serverArray = require('./server.js');
-//end of testing
-
-// const url_list = read.read_array();
 
 async function configureBrowser(url) { 
     const browser = await puppeteer.launch();
